@@ -1,0 +1,62 @@
+name: Build
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  headers:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install depot tools
+        run: |
+          git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+          echo "$PWD/depot_tools" >> $GITHUB_PATH
+
+      - name: Checkout v8
+        run: |
+          fetch v8
+          cd v8
+          git checkout ${{ steps.version.outputs.content }}
+          gclient sync
+
+      - name: Prepare out directory
+        run: |
+          mkdir ./out/
+          cp -R ./v8/include/*.h ./out/
+          zip -r ./out/include.zip ./out/include/
+          
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: headers
+          path: ./out/include.zip
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install depot tools
+        run: |
+          git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+          echo "$PWD/depot_tools" >> $GITHUB_PATH
+
+      - name: Checkout v8
+        run: |
+          fetch v8
+          cd v8
+          git checkout ${{ steps.version.outputs.content }}
+          gclient sync
+
+      - name: Compile
+        run: |
+          cd v8
+          tools/dev/gm.py x64.release
+          ls
