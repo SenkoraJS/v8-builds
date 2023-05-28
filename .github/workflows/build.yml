@@ -27,13 +27,12 @@ jobs:
         run: |
           mkdir ./out/
           cp -R ./v8/include/ ./out/
-          zip -r ./out/include.zip ./out/include/
           
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: headers
-          path: ./out/include.zip
+          path: ./out/include/
   build:
     runs-on: ubuntu-latest
     steps:
