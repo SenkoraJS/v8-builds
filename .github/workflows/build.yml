@@ -88,10 +88,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Zip it
+      - name: Rename out
         run: |
-          zip -r headers headers/
-          zip -r v8 out/
+          mv out.zip v8.zip
 
       - name: Create the release
         uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5
