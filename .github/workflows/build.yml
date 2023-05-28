@@ -28,7 +28,7 @@ jobs:
       - name: Prepare out directory
         run: |
           mkdir ./out/
-          cp -R ./v8/include/*.h ./out/
+          cp -R ./v8/include/ ./out/
           zip -r ./out/include.zip ./out/include/
           
       - name: Upload artifacts
